@@ -1,0 +1,32 @@
+#include <Servo.h>
+
+Servo myServo;
+int pirSensorPin = 2;     // PIR sensor connected to digital pin 2
+int pirState = LOW;       // Default state of PIR
+int inputVal = 0;
+
+void setup() {
+  myServo.attach(9);      // Servo motor connected to pin 9
+  pinMode(pirSensorPin, INPUT);
+  myServo.write(0);       // Door starts in closed position
+  Serial.begin(9600);
+}
+
+void loop() {
+  inputVal = digitalRead(pirSensorPin);
+
+  if (inputVal == HIGH) {
+    if (pirState == LOW) {
+      Serial.println("Motion Detected!");
+      myServo.write(90);    // Open the door
+      delay(3000);          // Keep door open for 3 seconds
+      myServo.write(0);     // Close the door
+      pirState = HIGH;
+    }
+  } else {
+    if (pirState == HIGH) {
+      Serial.println("No Motion.");
+      pirState = LOW;
+    }
+  }
+}
